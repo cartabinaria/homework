@@ -1,16 +1,9 @@
-import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	plugins: [svelte()],
+	plugins: [sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
-	},
-	css: {
-		postcss: {
-			plugins: [tailwindcss, autoprefixer,]
-		}
 	}
 });
