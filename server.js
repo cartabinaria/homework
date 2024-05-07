@@ -6,7 +6,9 @@ const app = express();
 app.use(cors()); // Usa il middleware cors
 app.use(express.json());
 
-app.post('/addBan', (req, res) => {
+const apiEndpoint = '/api';
+
+app.post(apiEndpoint + '/addBan', (req, res) => {
   const newBan = req.body;
   fs.readFile(`static/bans.json`, 'utf8', (err, data) => {
     if (err) {
@@ -27,7 +29,7 @@ app.post('/addBan', (req, res) => {
   });
 });
 
-app.post('/approveBan', (req, res) => {
+app.post(apiEndpoint + '/approveBan', (req, res) => {
   const ban = req.body;
 
   fs.readFile('static/bans.json', 'utf8', (err, data) => {
@@ -56,7 +58,7 @@ app.post('/approveBan', (req, res) => {
   });
 });
 
-app.get('/getBans', (req, res) => {
+app.get(apiEndpoint + '/getBans', (req, res) => {
   fs.readFile('static/bans.json', 'utf8', (err, data) => {
     if (err) {
       console.error(err);
