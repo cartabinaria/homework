@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import * as fs from 'fs';
+	import { serverURL } from '../const';
 
 	let bans: { name: string; description: string; approved: number }[] = [];
 	let newBanDescription = '';
@@ -9,7 +10,7 @@
 	onMount(async () => getBans());
 
 	async function getBans() {
-		const response = await fetch('http://localhost:3001/getBans', {
+		const response = await fetch(serverURL + '/getBans', {
 			method: 'GET'
 		})
 			.then((response) => {
@@ -33,7 +34,7 @@
 			approved: 0
 		};
 
-		const response = await fetch('http://localhost:3001/addBan', {
+		const response = await fetch(serverURL + '/addBan', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -68,7 +69,7 @@
 			};
 		}
 
-		const response = await fetch('http://localhost:3001/approveBan', {
+		const response = await fetch(serverURL + '/approveBan', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

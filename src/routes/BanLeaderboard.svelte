@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { serverURL } from '../const';
 	import Line from './Line.svelte';
 	import { onMount } from 'svelte';
 
@@ -18,7 +19,7 @@
 	});
 
 	async function getBans() {
-		const response = await fetch('http://localhost:3001/getBans', {
+		const response = await fetch(serverURL + '/getBans', {
 			method: 'GET'
 		})
 			.then((response) => {
