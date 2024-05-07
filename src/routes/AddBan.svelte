@@ -6,29 +6,24 @@
 	let newBanDescription = '';
 	let newBanName = '';
 
-	// Fetch and sort bans when component mounts
-	onMount(async () => {
-		let response = await fetch('/bans.json');
-		if (response.ok) {
-			bans = await response.json();
-			if (!Array.isArray(bans)) {
-				console.error('Error: bans is not an array');
-				bans = [];
-			}
-		} else {
-			console.error('Error fetching bans');
-		}
-	});
-
-	onMount(() => getBans());
+	onMount(async () => getBans());
 
 	async function getBans() {
-		const response = await fetch('/bans.json');
-		if (response.ok) {
-			bans = await response.json();
-		} else {
-			console.error('Error getting bans');
-		}
+		const response = await fetch('http://localhost:3001/getBans', {
+			method: 'GET'
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Error fetching bans');
+				}
+				return response.json();
+			})
+			.then((data) => {
+				bans = data;
+			})
+			.catch((error) => {
+				console.log('There was a problem with the fetch operation:', error);
+			});
 	}
 
 	async function addBan() {
