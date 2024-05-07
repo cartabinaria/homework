@@ -2,6 +2,14 @@ import adapter from '@sveltejs/adapter-auto';
 import nodeAdapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
+function chooseAdapter() {
+  if (process.env.NODE_ENV === 'production') {
+    return adapter();
+  } else {
+    return nodeAdapter();
+  }
+} 
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   // Consult https://kit.svelte.dev/docs/integrations#preprocessors
