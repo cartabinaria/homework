@@ -91,7 +91,7 @@
 	}
 </script>
 
-<div class="flex flex-wrap md:flex-col lg:flex-row justify-center items-center">
+<div class="flex flex-wrap md:flex-col lg:flex-row justify-center items-start">
 	<div class="rounded-lg bg-accent/30 m-5 p-5 max-w-full flex-grow h-fit">
 		<h2 class="text-2xl font-bold m-2">Aggiungi un Ban</h2>
 		<form
