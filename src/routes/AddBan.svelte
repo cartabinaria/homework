@@ -13,7 +13,7 @@
 
 	async function addBan() {
 		let newBan = {
-			name: newBanName,
+			name: capitalizeFirstLetter(newBanName),
 			description: newBanDescription,
 			approved: 0
 		};
@@ -28,11 +28,14 @@
 
 		if (response.ok) {
 			// Aggiungi il nuovo ban alla lista locale
-			bans.push(newBan);
 			bans = await getBans();
 		} else {
 			console.error('Error adding ban');
 		}
+	}
+
+	function capitalizeFirstLetter(s: string): string {
+		return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 	}
 
 	async function approveBan(name: string, description: string, approved: number) {
