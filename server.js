@@ -26,7 +26,7 @@ app.post(apiEndpoint + '/addBan', (req, res) => {
           console.error(err);
           res.status(500).send('Error writing to bans.json');
         } else {
-          res.status(200).send('Ban added successfully');
+          res.status(201).send('Ban added successfully');
         }
       });
     }
@@ -54,7 +54,7 @@ app.post(apiEndpoint + '/approveBan', (req, res) => {
           return;
         }
 
-        res.send('Ban approved successfully');
+        res.status(201).send('Ban approved successfully');
       });
     } else {
       res.status(404).send('Ban not found');
