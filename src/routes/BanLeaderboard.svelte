@@ -1,11 +1,22 @@
 <script lang="ts">
 	import Line from './Line.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { getBans } from '../global';
+	import type { Ban } from '../stores';
+	import { bans } from '../stores';
 
-	let bans: { name: string; description: string; approved: number }[] = [];
+	let bansContent: Ban[];
 	let banCounts: { name: string; count: number }[] = [];
-	let groupedBans: { [key: string]: typeof bans } = {};
+	let groupedBans: { [key: string]: Ban[] } = {};
+
+	const unsubscribe = bans.subscribe((value) => {
+		bansContent = value;
+		updateBanCounts();
+		groupBans();
+	});
+
+	$: bans;
+	onDestroy(unsubscribe);
 
 	// Chiamate queste funzioni ogni volta che l'array `bans` viene aggiornato
 	$: updateBanCounts();
@@ -13,14 +24,14 @@
 
 	// Fetch and sort bans when component mounts
 	onMount(async () => {
-		bans = await getBans();
+		bans.set(await getBans());
 		updateBanCounts();
 		groupBans();
 	});
 
 	async function updateBanCounts() {
 		let counts: { [key: string]: number } = {};
-		for (let ban of bans) {
+		for (let ban of bansContent) {
 			if (counts[ban.name]) {
 				counts[ban.name]++;
 			} else {
@@ -39,7 +50,7 @@
 		// Loop over the sorted banCounts array
 		for (let { name } of banCounts) {
 			// Filter the bans array to get the bans for the current name
-			let bansForName = bans.filter((ban) => ban.name === name);
+			let bansForName = bansContent.filter((ban) => ban.name === name);
 
 			// Add the bans for the current name to the groupedBans object
 			groupedBans[name] = bansForName;

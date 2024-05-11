@@ -1,6 +1,7 @@
 import { serverURL } from './const';
+import type { Ban } from './stores';
 
-export async function getBans(): Promise<{ name: string; description: string; approved: number }[]> {
+export async function getBans(): Promise<Ban[]> {
   try {
     const response = await fetch(serverURL + '/getBans', {
       method: 'GET'
