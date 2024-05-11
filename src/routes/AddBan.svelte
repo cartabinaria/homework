@@ -11,7 +11,7 @@
 		bans = await getBans();
 	});
 
-	async function addBan() {
+	async function addBan(event: any) {
 		let newBan = {
 			name: capitalizeFirstLetter(newBanName),
 			description: newBanDescription,
@@ -32,6 +32,8 @@
 		} else {
 			console.error('Error adding ban');
 		}
+
+		event.target.reset();
 	}
 
 	function capitalizeFirstLetter(s: string): string {
