@@ -1,31 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import * as fs from 'fs';
 	import { serverURL } from '../const';
+	import { getBans } from '../global';
 
 	let bans: { name: string; description: string; approved: number }[] = [];
 	let newBanDescription = '';
 	let newBanName = '';
 
-	onMount(async () => getBans());
-
-	async function getBans() {
-		const response = await fetch(serverURL + '/getBans', {
-			method: 'GET'
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Error fetching bans');
-				}
-				return response.json();
-			})
-			.then((data) => {
-				bans = data;
-			})
-			.catch((error) => {
-				console.log('There was a problem with the fetch operation:', error);
-			});
-	}
+	onMount(async () => {
+		bans = await getBans();
+	});
 
 	async function addBan() {
 		let newBan = {
@@ -45,7 +29,7 @@
 		if (response.ok) {
 			// Aggiungi il nuovo ban alla lista locale
 			bans.push(newBan);
-			getBans();
+			bans = await getBans();
 		} else {
 			console.error('Error adding ban');
 		}
@@ -79,7 +63,7 @@
 
 		if (response.ok) {
 			// Aggiorna l'elenco dei ban
-			getBans();
+			bans = await getBans();
 		} else {
 			console.error('Error approving ban');
 		}

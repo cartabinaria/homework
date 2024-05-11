@@ -2,6 +2,10 @@ import express from 'express';
 import fs from 'fs';
 import cors from 'cors'; // Importa il modulo cors
 
+import { handler } from "./build/handler.js"
+
+const port = 3000;
+
 const app = express();
 app.use(cors()); // Usa il middleware cors
 app.use(express.json());
@@ -70,4 +74,6 @@ app.get(apiEndpoint + '/getBans', (req, res) => {
 
 });
 
-app.listen(3001, () => console.log('Server listening on port 3001'));
+app.use(handler);
+
+app.listen(port, () => console.log(`Server listening on port ${port}`));
