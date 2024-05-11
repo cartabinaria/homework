@@ -3,7 +3,7 @@
 
 <svelte:head>
 	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<meta name="description" content="Homework project" />
 </svelte:head>
 
 <section class="flex justify-center p-3">
