@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { serverURL } from '../const';
 	import Line from './Line.svelte';
 	import { onMount } from 'svelte';
+	import { getBans } from '../global';
 
-	let bans: { name: string; description: string; approved: boolean }[] = [];
+	let bans: { name: string; description: string; approved: number }[] = [];
 	let banCounts: { name: string; count: number }[] = [];
 	let groupedBans: { [key: string]: typeof bans } = {};
 
@@ -13,28 +13,10 @@
 
 	// Fetch and sort bans when component mounts
 	onMount(async () => {
-		await getBans();
+		bans = await getBans();
 		updateBanCounts();
 		groupBans();
 	});
-
-	async function getBans() {
-		const response = await fetch(serverURL + '/getBans', {
-			method: 'GET'
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Error fetching bans');
-				}
-				return response.json();
-			})
-			.then((data) => {
-				bans = data;
-			})
-			.catch((error) => {
-				console.log('There was a problem with the fetch operation:', error);
-			});
-	}
 
 	async function updateBanCounts() {
 		let counts: { [key: string]: number } = {};
