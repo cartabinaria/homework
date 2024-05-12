@@ -10,9 +10,9 @@
 	let newBanDescription = '';
 	let newBanName = '';
 
-	const unsubscribe = bans.subscribe((value) => (bansContent = value));
+	// const unsubscribe = bans.subscribe((value) => (bansContent = value));
 	$: bans;
-	onDestroy(unsubscribe);
+	// onDestroy(unsubscribe);
 
 	onMount(async () => bans.set(await getBans()));
 
@@ -114,13 +114,13 @@
 	</div>
 
 	<div
-		class="rounded-lg bg-accent/30 m-5 max-w-full flex-grow h-fit {bansContent.filter(
+		class="rounded-lg bg-accent/30 m-5 max-w-full flex-grow h-fit {$bans.filter(
 			(ban) => ban.approved < 2
 		).length == 0
 			? 'bg-success/50 max-w-fit p-3'
 			: ' p-7 '}"
 	>
-		{#if bansContent.filter((ban) => ban.approved < 2).length == 0}
+		{#if $bans.filter((ban) => ban.approved < 2).length == 0}
 			<div class="flex justify-around items-center">
 				<p class="font-medium text-xl text-content/60">Nessun ban da approvare</p>
 				<span class="text-7xl text-content/60 icon-[fa--check-circle] ml-2"></span>
@@ -129,7 +129,7 @@
 			<h2 class="text-2xl font-bold">Ban da approvare</h2>
 		{/if}
 		<ul>
-			{#each bansContent.filter((ban) => ban.approved < 2) as ban (ban.description)}
+			{#each $bans.filter((ban) => ban.approved < 2) as ban (ban.description)}
 				<li
 					class="rounded-lg bg-accent/60 p-3 flex flex-col sm:flex-row justify-between md:flex-auto m-1 items-center"
 				>
