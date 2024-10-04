@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const port = 3000;
+const port = 3001;
 const app = express();
 app.use(cors());
 app.use(express.json());
