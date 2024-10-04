@@ -3,13 +3,19 @@
 	import { bans } from '../stores';
 	import type { Ban } from '../stores';
 	import { addBan, approveBan, rejectBan } from '../global';
+	import Fireworks from '../components/Fireworks.svelte';
 
 	let newBanName = '';
 	let newBanDescription = '';
+	let newBanSuper: boolean;
 
 	async function handleAddBan() {
 		try {
-			const newBan = await addBan({ name: newBanName, description: newBanDescription });
+			const newBan = await addBan({
+				name: newBanName,
+				description: newBanDescription,
+				super: newBanSuper
+			});
 			bans.addBan(newBan);
 			newBanName = '';
 			newBanDescription = '';
@@ -58,6 +64,15 @@
 	}
 
 	$: unapprovedBans = $bans.filter((ban) => ban.approved < 2);
+
+	let showFireworks = false;
+
+	function triggerFireworks() {
+		showFireworks = true;
+		setTimeout(() => {
+			showFireworks = false;
+		}, 100);
+	}
 </script>
 
 <div class="flex flex-wrap md:flex-col lg:flex-row justify-center items-start">
@@ -86,6 +101,21 @@
 				type="submit"><span class="icon-[fa--plus] mr-1"></span>Add Ban</button
 			>
 		</form>
+		<label class="ml-2 label cursor-pointer w-fit gap-2">
+			<span class="label-text flex text-warning items-center"
+				>Super <span class="icon-[fa--close] ml-1"></span></span
+			>
+			<input
+				type="checkbox"
+				class="toggle toggle-warning"
+				bind:checked={newBanSuper}
+				on:change={() => {
+					if (newBanSuper) triggerFireworks();
+				}}
+			/>
+		</label>
+		<Fireworks trigger={showFireworks} />
+		<!-- <XConfetti bind:checked={newBanSuper} /> -->
 	</div>
 
 	<div

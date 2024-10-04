@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
+	<title>Homework</title>
 	<meta name="description" content="Homework project" />
 </svelte:head>
 

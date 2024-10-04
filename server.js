@@ -15,70 +15,72 @@ const __dirname = path.dirname(__filename);
 const bansFilePath = path.join(__dirname, 'static', 'bans.json');
 
 function readBans() {
-    const data = fs.readFileSync(bansFilePath, 'utf8');
-    return JSON.parse(data);
+	const data = fs.readFileSync(bansFilePath, 'utf8');
+	return JSON.parse(data);
 }
 
 function writeBans(bans) {
-    fs.writeFileSync(bansFilePath, JSON.stringify(bans, null, 2), 'utf8');
+	fs.writeFileSync(bansFilePath, JSON.stringify(bans, null, 2), 'utf8');
 }
 
 app.get(apiEndpoint + '/getBans', (req, res) => {
-    try {
-        const bans = readBans();
-        res.json(bans);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to read bans' });
-    }
+	try {
+		const bans = readBans();
+		res.json(bans);
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to read bans' });
+	}
 });
 
 app.post(apiEndpoint + '/addBan', (req, res) => {
-    try {
-        const newBan = { ...req.body, approved: 0 };
-        const bans = readBans();
-        bans.push(newBan);
-        writeBans(bans);
-        res.json({ message: "Ban added successfully", ban: newBan });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to add ban' });
-    }
+	try {
+		const newBan = { ...req.body, approved: 0 };
+		const bans = readBans();
+		bans.push(newBan);
+		writeBans(bans);
+		res.json({ message: 'Ban added successfully', ban: newBan });
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to add ban' });
+	}
 });
 
 app.post(apiEndpoint + '/approveBan', (req, res) => {
-    try {
-        const { name, description } = req.body;
-        const bans = readBans();
-        const banIndex = bans.findIndex((ban) => ban.name === name && ban.description === description);
+	try {
+		const { name, description } = req.body;
+		const bans = readBans();
+		const banIndex = bans.findIndex((ban) => ban.name === name && ban.description === description);
 
-        if (banIndex !== -1) {
-            bans[banIndex].approved += 1;
-            writeBans(bans);
-            res.json({ message: 'Ban approved successfully', ban: bans[banIndex] });
-        } else {
-            res.status(404).json({ error: 'Ban not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to approve ban' });
-    }
+		if (banIndex !== -1) {
+			bans[banIndex].approved += 1;
+			writeBans(bans);
+			res.json({ message: 'Ban approved successfully', ban: bans[banIndex] });
+		} else {
+			res.status(404).json({ error: 'Ban not found' });
+		}
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to approve ban' });
+	}
 });
 
 app.post(apiEndpoint + '/rejectBan', (req, res) => {
-    try {
-        const { name, description } = req.body;
-        const bans = readBans();
-        const updatedBans = bans.filter((ban) => !(ban.name === name && ban.description === description));
-        
-        if (bans.length !== updatedBans.length) {
-            writeBans(updatedBans);
-            res.json({ message: 'Ban rejected successfully' });
-        } else {
-            res.status(404).json({ error: 'Ban not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to reject ban' });
-    }
+	try {
+		const { name, description } = req.body;
+		const bans = readBans();
+		const updatedBans = bans.filter(
+			(ban) => !(ban.name === name && ban.description === description)
+		);
+
+		if (bans.length !== updatedBans.length) {
+			writeBans(updatedBans);
+			res.json({ message: 'Ban rejected successfully' });
+		} else {
+			res.status(404).json({ error: 'Ban not found' });
+		}
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to reject ban' });
+	}
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+	console.log(`Server is running on port ${port}`);
 });

@@ -1,11 +1,13 @@
 # Homework
 
 1. run the server
+
 ```bash
 node server.js
 ```
 
 2. run the client
+
 ```bash
 npm run dev
 
