@@ -3,8 +3,8 @@
 </script>
 
 <div class="w-full flex flex-col m-2">
-	<h4 class="text-xl font-bold">{bans[0].name}</h4>
 	{#if bans && bans.length > 0}
+	<h4 class="text-xl font-bold">{bans[0].name}</h4>
 		{#each bans as ban}
 			<div class="flex flex-row items-baseline">
 				{#if ban.approved >= 2}

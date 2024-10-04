@@ -1,79 +1,84 @@
 import express from 'express';
+import cors from 'cors';
 import fs from 'fs';
-import cors from 'cors'; // Importa il modulo cors
-
-import { handler } from "./build/handler.js"
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const port = 3000;
-
 const app = express();
-app.use(cors()); // Usa il middleware cors
+app.use(cors());
 app.use(express.json());
 
 const apiEndpoint = '/api';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const bansFilePath = path.join(__dirname, 'static', 'bans.json');
+
+function readBans() {
+    const data = fs.readFileSync(bansFilePath, 'utf8');
+    return JSON.parse(data);
+}
+
+function writeBans(bans) {
+    fs.writeFileSync(bansFilePath, JSON.stringify(bans, null, 2), 'utf8');
+}
+
+app.get(apiEndpoint + '/getBans', (req, res) => {
+    try {
+        const bans = readBans();
+        res.json(bans);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to read bans' });
+    }
+});
 
 app.post(apiEndpoint + '/addBan', (req, res) => {
-  const newBan = req.body;
-  fs.readFile(`static/bans.json`, 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error reading bans.json');
-    } else {
-      const bans = JSON.parse(data);
-      bans.push(newBan);
-      fs.writeFile(`static/bans.json`, JSON.stringify(bans, null, 2), 'utf8', (err) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send('Error writing to bans.json');
-        } else {
-          res.status(201).send('Ban added successfully');
-        }
-      });
+    try {
+        const newBan = { ...req.body, approved: 0 };
+        const bans = readBans();
+        bans.push(newBan);
+        writeBans(bans);
+        res.json({ message: "Ban added successfully", ban: newBan });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to add ban' });
     }
-  });
 });
 
 app.post(apiEndpoint + '/approveBan', (req, res) => {
-  const ban = req.body;
+    try {
+        const { name, description } = req.body;
+        const bans = readBans();
+        const banIndex = bans.findIndex((ban) => ban.name === name && ban.description === description);
 
-  fs.readFile('static/bans.json', 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error reading bans file');
-      return;
-    }
-
-    let bans = JSON.parse(data);
-    const index = bans.findIndex(b => b.name === ban.name && b.description === ban.description);
-    if (index !== -1) {
-      bans[index] = ban;
-      fs.writeFile('static/bans.json', JSON.stringify(bans), 'utf8', err => {
-        if (err) {
-          console.error(err);
-          res.status(500).send('Error writing to bans file');
-          return;
+        if (banIndex !== -1) {
+            bans[banIndex].approved += 1;
+            writeBans(bans);
+            res.json({ message: 'Ban approved successfully', ban: bans[banIndex] });
+        } else {
+            res.status(404).json({ error: 'Ban not found' });
         }
-
-        res.status(201).send('Ban approved successfully');
-      });
-    } else {
-      res.status(404).send('Ban not found');
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to approve ban' });
     }
-  });
 });
 
-app.get(apiEndpoint + '/getBans', (req, res) => {
-  fs.readFile('static/bans.json', 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error reading bans file');
-      return;
+app.post(apiEndpoint + '/rejectBan', (req, res) => {
+    try {
+        const { name, description } = req.body;
+        const bans = readBans();
+        const updatedBans = bans.filter((ban) => !(ban.name === name && ban.description === description));
+        
+        if (bans.length !== updatedBans.length) {
+            writeBans(updatedBans);
+            res.json({ message: 'Ban rejected successfully' });
+        } else {
+            res.status(404).json({ error: 'Ban not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to reject ban' });
     }
-    res.status(200).send(data);
-  })
-
 });
 
-app.use(handler);
-
-app.listen(port, () => console.log(`Server listening on port ${port}`));
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
